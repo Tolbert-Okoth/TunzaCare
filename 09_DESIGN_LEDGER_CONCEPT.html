@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TunzaCare — Ledger Concept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EDDD;
+    --paper-2:#ECE4CE;
+    --ink:#2B2419;
+    --ink-soft:#6B5F49;
+    --rule:#C9BFA0;
+    --stamp:#9C3B2A;
+    --stamp-dim:#EDD9D2;
+    --seal:#3D6650;
+    --seal-dim:#DDE7DF;
+    --tab-ochre:#B8863B;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:#DED2AF;
+    font-family:'Spectral',serif;
+    color:var(--ink);
+    display:flex; flex-direction:column; align-items:center;
+    padding:34px 16px 70px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .toolbar{display:flex; gap:6px; margin-bottom:22px; flex-wrap:wrap; justify-content:center;}
+  .tbtn{
+    background:var(--paper); border:1px solid var(--rule); color:var(--ink-soft);
+    padding:7px 13px; border-radius:3px; font-size:12px; font-weight:500; cursor:pointer;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .tbtn.active{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+
+  .book{
+    width:366px; height:730px;
+    position:relative;
+    box-shadow:0 24px 60px rgba(30,22,10,0.35);
+    border-radius:3px;
+    overflow:hidden;
+  }
+  /* stitched spine */
+  .spine{
+    position:absolute; left:22px; top:0; bottom:0; width:0;
+    border-left:2px dashed #B7A87E; z-index:6;
+  }
+  .spine .hole{
+    position:absolute; left:-4px; width:8px; height:8px; border-radius:50%;
+    background:#DED2AF; box-shadow:inset 0 1px 2px rgba(0,0,0,0.3);
+  }
+  /* paper texture via layered gradients */
+  .page{
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(to bottom, transparent 0, transparent 27px, rgba(150,130,90,0.16) 28px),
+      radial-gradient(circle at 85% 15%, rgba(255,255,255,0.25), transparent 40%),
+      var(--paper);
+    display:none;
+    padding:30px 26px 26px 42px;
+    overflow-y:auto;
+  }
+  .page.active{display:block;}
+
+  /* right-edge tab rail (signature nav) */
+  .tabs{position:absolute; right:0; top:70px; display:flex; flex-direction:column; gap:10px; z-index:7;}
+  .tab{
+    width:34px; height:44px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Special Elite',monospace; font-size:9px; letter-spacing:0.02em;
+    color:#fff; cursor:pointer; border-radius:6px 0 0 6px;
+    writing-mode:vertical-rl; text-orientation:mixed;
+    opacity:0.72;
+  }
+  .tab.selected{opacity:1; width:38px; box-shadow:-3px 0 8px rgba(0,0,0,0.25);}
+  .tab.t1{background:var(--tab-ochre);}
+  .tab.t2{background:var(--seal);}
+  .tab.t3{background:var(--stamp);}
+  .tab.t4{background:#5B5140;}
+
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase;
+    letter-spacing:0.12em; color:var(--ink-soft); margin-bottom:5px;
+  }
+  h1{font-weight:600; font-size:22px; margin:0 0 4px; font-style:italic;}
+  h2{font-weight:600; font-size:15px; margin:0 0 8px;}
+  p.lede{color:var(--ink-soft); font-size:13px; line-height:1.55; margin:0 0 16px;}
+
+  .divider{border:none; border-top:1px solid var(--rule); margin:16px 0;}
+  .perf{
+    border:none; height:0; margin:18px 0;
+    border-top:1px dashed #B7A87E;
+    position:relative;
+  }
+
+  .stamp-btn{
+    width:96px; height:96px; border-radius:50%; margin:6px auto 10px;
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    border:2.5px solid var(--stamp); color:var(--stamp);
+    font-family:'Special Elite',monospace; font-size:11px; text-align:center; line-height:1.3;
+    transform:rotate(-6deg); cursor:pointer; background:transparent;
+  }
+  .stamp-btn.done{
+    background:var(--stamp); color:#fff;
+    transform:rotate(-4deg);
+  }
+  .stamp-btn small{font-size:9px; opacity:0.8; display:block; margin-top:2px;}
+
+  .visa-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:5px; margin-top:14px;}
+  .visa-day{
+    aspect-ratio:1; border:1px solid var(--rule); border-radius:3px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ink-soft);
+    position:relative; background:rgba(255,255,255,0.3);
+  }
+  .visa-day.stamped{
+    color:var(--seal); font-weight:700; border-color:var(--seal);
+  }
+  .visa-day.stamped::after{
+    content:'●'; position:absolute; font-size:18px; opacity:0.85; transform:rotate(-8deg);
+  }
+  .visa-day.today{border:2px solid var(--stamp); color:var(--stamp); font-weight:700;}
+
+  .ledger-line{
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding:9px 0; border-bottom:1px solid var(--rule);
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+  }
+  .ledger-line .date{color:var(--ink-soft); width:70px; flex-shrink:0;}
+  .ledger-line .val{font-weight:600; flex:1; text-align:left; padding-left:10px;}
+  .band-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:9.5px; padding:2px 7px;
+    border-radius:10px; text-transform:uppercase; letter-spacing:0.03em;
+  }
+  .band-normal{background:var(--seal-dim); color:var(--seal);}
+  .band-elevated{background:#F3E4C6; color:var(--tab-ochre);}
+  .band-high{background:var(--stamp-dim); color:var(--stamp);}
+
+  .input-row{margin-bottom:16px;}
+  .input-row label{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:5px;}
+  .input-row input{
+    width:100%; border:none; border-bottom:1.5px solid var(--ink); background:transparent;
+    font-family:'IBM Plex Mono',monospace; font-size:20px; padding:5px 2px; color:var(--ink);
+    font-weight:600; outline:none;
+  }
+  .btn{
+    display:block; width:100%; text-align:center; padding:13px; border-radius:3px;
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px; font-weight:600;
+    text-transform:uppercase; letter-spacing:0.06em; border:none; cursor:pointer;
+    text-decoration:none;
+  }
+  .btn-ink{background:var(--ink); color:var(--paper);}
+  .btn-outline{background:transparent; border:1.5px solid var(--ink); color:var(--ink);}
+
+  /* emergency: torn page, breaks the metaphor deliberately */
+  .torn-page{
+    background:var(--stamp); color:#fff; height:100%; padding:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; position:relative;
+  }
+  .torn-edge{
+    position:absolute; top:0; left:0; right:0; height:22px;
+    background:
+      linear-gradient(135deg, var(--paper) 25%, transparent 25.5%) 0 0/14px 14px,
+      linear-gradient(-135deg, var(--paper) 25%, transparent 25.5%) 0 0/14px 14px;
+  }
+  .big-stamp{
+    font-family:'Special Elite',monospace; font-size:30px; border:4px solid #fff;
+    padding:10px 20px; transform:rotate(-5deg); margin:26px 20px 18px;
+    letter-spacing:0.03em;
+  }
+  .reading-huge{font-family:'IBM Plex Mono',monospace; font-size:44px; font-weight:700; margin-bottom:6px;}
+  .torn-page p{font-size:13px; padding:0 30px; line-height:1.6; margin-bottom:22px;}
+  .btn-white{background:#fff; color:var(--stamp); margin:0 30px; width:calc(100% - 60px);}
+
+  /* sealed letter */
+  .envelope{
+    border:2px solid var(--ink); border-radius:4px; padding:0; margin-top:8px; overflow:hidden;
+    background:#fff;
+  }
+  .envelope-flap{
+    background:var(--paper-2); padding:16px; text-align:center;
+    border-bottom:1.5px dashed var(--rule);
+    font-family:'Special Elite',monospace; font-size:11px; color:var(--ink-soft);
+  }
+  .envelope-body{padding:16px; font-size:12.5px; line-height:1.6; font-style:italic;}
+  .wax{
+    width:26px; height:26px; border-radius:50%; background:var(--stamp); color:#fff;
+    display:flex; align-items:center; justify-content:center; margin:0 auto 8px;
+    font-family:'Special Elite',monospace; font-size:11px; box-shadow:0 2px 4px rgba(0,0,0,0.3);
+  }
+  .toggle-row{display:flex; align-items:center; justify-content:space-between; margin-top:16px;}
+  .toggle{width:40px; height:22px; border-radius:14px; background:var(--rule); position:relative;}
+  .toggle::after{content:''; position:absolute; left:2px; top:2px; width:18px; height:18px; border-radius:50%; background:#fff;}
+
+  @media (max-width:420px){ .book{width:94vw; height:78vh;} }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <button class="tbtn active" data-p="home">Home</button>
+  <button class="tbtn" data-p="log">Log Reading</button>
+  <button class="tbtn" data-p="alert">Emergency</button>
+  <button class="tbtn" data-p="escalation">Sealed Letter</button>
+  <button class="tbtn" data-p="trends">Ledger / Trends</button>
+</div>
+
+<div class="book">
+  <div class="spine">
+    <div class="hole" style="top:60px;"></div>
+    <div class="hole" style="top:210px;"></div>
+    <div class="hole" style="top:360px;"></div>
+    <div class="hole" style="top:510px;"></div>
+    <div class="hole" style="top:660px;"></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab t1 selected" data-t="home">TODAY</div>
+    <div class="tab t2" data-t="log">LOG</div>
+    <div class="tab t3" data-t="alert">ALERT</div>
+    <div class="tab t4" data-t="escalation">CONTACT</div>
+  </div>
+
+  <!-- HOME -->
+  <div class="page active" id="home">
+    <div class="eyebrow">14 · Aug · Thursday</div>
+    <h1>Good afternoon, Asha</h1>
+    <p class="lede">Day 12 of your record. Steady as it goes.</p>
+
+    <div class="stamp-btn done">TAKEN<small>TODAY</small></div>
+    <p style="text-align:center; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft); margin-top:-2px;">Tap tomorrow to stamp again</p>
+
+    <hr class="perf">
+
+    <div class="eyebrow">This month's page</div>
+    <div class="visa-grid">
+      <div class="visa-day stamped">1</div><div class="visa-day stamped">2</div><div class="visa-day stamped">3</div>
+      <div class="visa-day">4</div><div class="visa-day stamped">5</div><div class="visa-day stamped">6</div>
+      <div class="visa-day stamped">7</div><div class="visa-day stamped">8</div><div class="visa-day stamped">9</div>
+      <div class="visa-day">10</div><div class="visa-day stamped">11</div><div class="visa-day today">12</div>
+      <div class="visa-day">13</div><div class="visa-day">14</div>
+    </div>
+
+    <hr class="divider">
+    <div class="eyebrow">Refill</div>
+    <p class="lede" style="margin-bottom:6px;">9 days of medicine remain in your supply.</p>
+    <div style="height:6px; background:var(--rule); border-radius:3px; overflow:hidden;">
+      <div style="width:30%; height:100%; background:var(--tab-ochre);"></div>
+    </div>
+  </div>
+
+  <!-- LOG READING -->
+  <div class="page" id="log">
+    <div class="eyebrow">New Entry</div>
+    <h1>Log a reading</h1>
+    <p class="lede">Written into today's page of your record.</p>
+
+    <div class="input-row">
+      <label>Systolic</label>
+      <input type="text" value="142" />
+    </div>
+    <div class="input-row">
+      <label>Diastolic</label>
+      <input type="text" value="94" />
+    </div>
+    <div class="ledger-line" style="border:none; padding-top:0;">
+      <span style="font-family:'Spectral',serif; font-style:italic; font-size:13px;">This reading falls in</span>
+      <span class="band-tag band-elevated">Grade 1</span>
+    </div>
+    <hr class="divider">
+    <button class="btn btn-ink">Write into ledger</button>
+  </div>
+
+  <!-- EMERGENCY -->
+  <div class="page" id="alert" style="padding:0;">
+    <div class="torn-page">
+      <div class="torn-edge"></div>
+      <div class="big-stamp">URGENT</div>
+      <div class="reading-huge">204/108</div>
+      <p>This reading is well outside your usual range. Please contact a health worker or go to a facility now.</p>
+      <button class="btn btn-white">Nimeelewa — I understand</button>
+    </div>
+  </div>
+
+  <!-- ESCALATION / SEALED LETTER -->
+  <div class="page" id="escalation">
+    <div class="eyebrow">Trusted Contact</div>
+    <h1>A sealed letter</h1>
+    <p class="lede">If you go quiet for a week, this — and only this — is what gets sent to Baba.</p>
+
+    <div class="envelope">
+      <div class="envelope-flap">✉ BREAK SEAL TO PREVIEW</div>
+      <div class="envelope-body">
+        <div class="wax">✕</div>
+        "Habari, hii ni taarifa ya kumjulia hali Asha kutoka kwenye programu yake ya afya. Hajathibitisha rekodi yake kwa wiki moja — tafadhali wasiliana naye kumjulia hali."
+      </div>
+    </div>
+
+    <div class="toggle-row">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--ink-soft);">SEND THIS IF I GO QUIET</span>
+      <div class="toggle"></div>
+    </div>
+    <p style="font-size:11px; color:var(--ink-soft); margin-top:14px;">No readings. No numbers. No medicine names. Only this.</p>
+  </div>
+
+  <!-- TRENDS -->
+  <div class="page" id="trends">
+    <div class="eyebrow">The Ledger</div>
+    <h1>Your record</h1>
+    <p class="lede">Every entry, in order, as written.</p>
+
+    <div class="ledger-line">
+      <span class="date">Aug 12</span><span class="val">142 / 94</span><span class="band-tag band-elevated">Grade 1</span>
+    </div>
+    <div class="ledger-line">
+      <span class="date">Aug 10</span><span class="val">128 / 82</span><span class="band-tag band-normal">Normal</span>
+    </div>
+    <div class="ledger-line">
+      <span class="date">Aug 08</span><span class="val">151 / 97</span><span class="band-tag band-high">Grade 2</span>
+    </div>
+    <div class="ledger-line">
+      <span class="date">Aug 05</span><span class="val">134 / 86</span><span class="band-tag band-elevated">Grade 1</span>
+    </div>
+    <div class="ledger-line" style="border-bottom:none;">
+      <span class="date">Aug 02</span><span class="val">122 / 79</span><span class="band-tag band-normal">Normal</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function show(id){
+    document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id===id));
+    document.querySelectorAll('.tbtn').forEach(b=>b.classList.toggle('active', b.dataset.p===id));
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('selected', t.dataset.t===id));
+  }
+  document.querySelectorAll('.tbtn').forEach(b=>b.addEventListener('click', ()=>show(b.dataset.p)));
+  document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click', ()=>show(t.dataset.t)));
+</script>
+</body>
+</html>

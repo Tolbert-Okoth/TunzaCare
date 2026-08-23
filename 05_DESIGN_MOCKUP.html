@@ -1,0 +1,203 @@
+<!--
+  SUPERSEDED REFERENCE NOTICE:
+  This mockup has been superseded by 09_DESIGN_LEDGER_CONCEPT.html (Ledger & Passport Metaphor).
+  See 09_DESIGN_LEDGER_CONCEPT.html and src/ui/ for the canonical shipped design.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TunzaCare — Ledger Concept (Canonical Design Reference)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EDDD;
+    --paper-2:#ECE4CE;
+    --ink:#2B2419;
+    --ink-soft:#6B5F49;
+    --rule:#C9BFA0;
+    --stamp:#9C3B2A;
+    --stamp-dim:#EDD9D2;
+    --seal:#3D6650;
+    --seal-dim:#DDE7DF;
+    --tab-ochre:#B8863B;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:#DED2AF;
+    font-family:'Spectral',serif;
+    color:var(--ink);
+    display:flex; flex-direction:column; align-items:center;
+    padding:34px 16px 70px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .toolbar{display:flex; gap:6px; margin-bottom:22px; flex-wrap:wrap; justify-content:center;}
+  .tbtn{
+    background:var(--paper); border:1px solid var(--rule); color:var(--ink-soft);
+    padding:7px 13px; border-radius:3px; font-size:12px; font-weight:500; cursor:pointer;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .tbtn.active{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+
+  .book{
+    width:366px; height:730px;
+    position:relative;
+    box-shadow:0 24px 60px rgba(30,22,10,0.35);
+    border-radius:3px;
+    overflow:hidden;
+  }
+  .spine{
+    position:absolute; left:22px; top:0; bottom:0; width:0;
+    border-left:2px dashed #B7A87E; z-index:6;
+  }
+  .spine .hole{
+    position:absolute; left:-4px; width:8px; height:8px; border-radius:50%;
+    background:#DED2AF; box-shadow:inset 0 1px 2px rgba(0,0,0,0.3);
+  }
+  .page{
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(to bottom, transparent 0, transparent 27px, rgba(150,130,90,0.16) 28px),
+      radial-gradient(circle at 85% 15%, rgba(255,255,255,0.25), transparent 40%),
+      var(--paper);
+    display:none;
+    padding:30px 26px 26px 42px;
+    overflow-y:auto;
+  }
+  .page.active{display:block;}
+
+  .tabs{position:absolute; right:0; top:70px; display:flex; flex-direction:column; gap:10px; z-index:7;}
+  .tab{
+    width:34px; height:44px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Special Elite',monospace; font-size:9px; letter-spacing:0.02em;
+    color:#fff; cursor:pointer; border-radius:6px 0 0 6px;
+    writing-mode:vertical-rl; text-orientation:mixed;
+    opacity:0.72;
+  }
+  .tab.selected{opacity:1; width:38px; box-shadow:-3px 0 8px rgba(0,0,0,0.25);}
+  .tab.t1{background:var(--tab-ochre);}
+  .tab.t2{background:var(--seal);}
+  .tab.t3{background:var(--stamp);}
+  .tab.t4{background:#5B5140;}
+
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase;
+    letter-spacing:0.12em; color:var(--ink-soft); margin-bottom:5px;
+  }
+  h1{font-weight:600; font-size:22px; margin:0 0 4px; font-style:italic;}
+  h2{font-weight:600; font-size:15px; margin:0 0 8px;}
+  p.lede{color:var(--ink-soft); font-size:13px; line-height:1.55; margin:0 0 16px;}
+
+  .divider{border:none; border-top:1px solid var(--rule); margin:16px 0;}
+  .perf{
+    border:none; height:0; margin:18px 0;
+    border-top:1px dashed #B7A87E;
+    position:relative;
+  }
+
+  .stamp-btn{
+    width:96px; height:96px; border-radius:50%; margin:6px auto 10px;
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    border:2.5px solid var(--stamp); color:var(--stamp);
+    font-family:'Special Elite',monospace; font-size:11px; text-align:center; line-height:1.3;
+    transform:rotate(-6deg); cursor:pointer; background:transparent;
+  }
+  .stamp-btn.done{
+    background:var(--stamp); color:#fff;
+    transform:rotate(-4deg);
+  }
+  .stamp-btn small{font-size:9px; opacity:0.8; display:block; margin-top:2px;}
+
+  .visa-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:5px; margin-top:14px;}
+  .visa-day{
+    aspect-ratio:1; border:1px solid var(--rule); border-radius:3px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ink-soft);
+    position:relative; background:rgba(255,255,255,0.3);
+  }
+  .visa-day.stamped{
+    color:var(--seal); font-weight:700; border-color:var(--seal);
+  }
+  .visa-day.stamped::after{
+    content:'●'; position:absolute; font-size:18px; opacity:0.85; transform:rotate(-8deg);
+  }
+  .visa-day.today{border:2px solid var(--stamp); color:var(--stamp); font-weight:700;}
+
+  .ledger-line{
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding:9px 0; border-bottom:1px solid var(--rule);
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+  }
+  .ledger-line .date{color:var(--ink-soft); width:70px; flex-shrink:0;}
+  .ledger-line .val{font-weight:600; flex:1; text-align:left; padding-left:10px;}
+  .band-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:9.5px; padding:2px 7px;
+    border-radius:10px; text-transform:uppercase; letter-spacing:0.03em;
+  }
+  .band-normal{background:var(--seal-dim); color:var(--seal);}
+  .band-elevated{background:#F3E4C6; color:var(--tab-ochre);}
+  .band-high{background:var(--stamp-dim); color:var(--stamp);}
+
+  .input-row{margin-bottom:16px;}
+  .input-row label{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:5px;}
+  .input-row input{
+    width:100%; border:none; border-bottom:1.5px solid var(--ink); background:transparent;
+    font-family:'IBM Plex Mono',monospace; font-size:20px; padding:5px 2px; color:var(--ink);
+    font-weight:600; outline:none;
+  }
+  .btn{
+    display:block; width:100%; text-align:center; padding:13px; border-radius:3px;
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px; font-weight:600;
+    text-transform:uppercase; letter-spacing:0.06em; border:none; cursor:pointer;
+    text-decoration:none;
+  }
+  .btn-ink{background:var(--ink); color:var(--paper);}
+  .btn-outline{background:transparent; border:1.5px solid var(--ink); color:var(--ink);}
+
+  .torn-page{
+    background:var(--stamp); color:#fff; height:100%; padding:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; position:relative;
+  }
+  .torn-edge{
+    position:absolute; top:0; left:0; right:0; height:22px;
+    background:
+      linear-gradient(135deg, var(--paper) 25%, transparent 25.5%) 0 0/14px 14px,
+      linear-gradient(-135deg, var(--paper) 25%, transparent 25.5%) 0 0/14px 14px;
+  }
+  .big-stamp{
+    font-family:'Special Elite',monospace; font-size:30px; border:4px solid #fff;
+    padding:10px 20px; transform:rotate(-5deg); margin:26px 20px 18px;
+    letter-spacing:0.03em;
+  }
+  .reading-huge{font-family:'IBM Plex Mono',monospace; font-size:44px; font-weight:700; margin-bottom:6px;}
+  .torn-page p{font-size:13px; padding:0 30px; line-height:1.6; margin-bottom:22px;}
+  .btn-white{background:#fff; color:var(--stamp); margin:0 30px; width:calc(100% - 60px);}
+
+  .envelope{
+    border:2px solid var(--ink); border-radius:4px; padding:0; margin-top:8px; overflow:hidden;
+    background:#fff;
+  }
+  .envelope-flap{
+    background:var(--paper-2); padding:16px; text-align:center;
+    border-bottom:1.5px dashed var(--rule);
+    font-family:'Special Elite',monospace; font-size:11px; color:var(--ink-soft);
+  }
+  .envelope-body{padding:16px; font-size:12.5px; line-height:1.6; font-style:italic;}
+  .wax{
+    width:26px; height:26px; border-radius:50%; background:var(--stamp); color:#fff;
+    display:flex; align-items:center; justify-content:center; margin:0 auto 8px;
+    font-family:'Special Elite',monospace; font-size:11px; box-shadow:0 2px 4px rgba(0,0,0,0.3);
+  }
+  .toggle-row{display:flex; align-items:center; justify-content:space-between; margin-top:16px;}
+  .toggle{width:40px; height:22px; border-radius:14px; background:var(--rule); position:relative;}
+  .toggle::after{content:''; position:absolute; left:2px; top:2px; width:18px; height:18px; border-radius:50%; background:#fff;}
+</style>
+</head>
+<body>
+<!-- See 09_DESIGN_LEDGER_CONCEPT.html for interactive demonstration -->
+</body>
+</html>

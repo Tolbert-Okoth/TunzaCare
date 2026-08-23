@@ -1,0 +1,114 @@
+{
+  "adherence": {
+    "target_threshold_percent": 80,
+    "description": "Check-in based proxy for Proportion of Days Covered (PDC), distinguishing adherent from non-adherent chronic management."
+  },
+  "blood_pressure": {
+    "unit": "mmHg",
+    "bands": [
+      {
+        "id": "normal",
+        "name_en": "Normal",
+        "name_sw": "Kawaida",
+        "systolic_max": 129,
+        "diastolic_max": 84,
+        "description_en": "<130/85 mmHg",
+        "description_sw": "<130/85 mmHg"
+      },
+      {
+        "id": "high_normal",
+        "name_en": "High-normal",
+        "name_sw": "Juu kidogo (High-normal)",
+        "systolic_min": 130,
+        "systolic_max": 139,
+        "diastolic_min": 85,
+        "diastolic_max": 89,
+        "description_en": "130–139/85–89 mmHg",
+        "description_sw": "130–139/85–89 mmHg"
+      },
+      {
+        "id": "grade_1",
+        "name_en": "Grade 1 (elevated)",
+        "name_sw": "Kiwango cha 1 (Grade 1)",
+        "systolic_min": 140,
+        "systolic_max": 159,
+        "diastolic_min": 90,
+        "diastolic_max": 99,
+        "description_en": "140–159/90–99 mmHg",
+        "description_sw": "140–159/90–99 mmHg"
+      },
+      {
+        "id": "grade_2",
+        "name_en": "Grade 2 (high)",
+        "name_sw": "Kiwango cha 2 (Grade 2 - Juu)",
+        "systolic_min": 160,
+        "diastolic_min": 100,
+        "description_en": "≥160/100 mmHg",
+        "description_sw": "≥160/100 mmHg"
+      }
+    ],
+    "emergency_thresholds": {
+      "high_systolic": 200,
+      "high_diastolic": 100,
+      "low_systolic": 80
+    },
+    "validation": {
+      "systolic_min": 50,
+      "systolic_max": 300,
+      "diastolic_min": 30,
+      "diastolic_max": 200
+    }
+  },
+  "blood_glucose": {
+    "default_unit": "mg/dL",
+    "conversion_factor": 18.0182,
+    "fasting_bands": [
+      {
+        "id": "normal_fasting",
+        "name_en": "Normal (fasting)",
+        "name_sw": "Kawaida (Kabla ya kula)",
+        "min_mgdl": 70,
+        "max_mgdl": 99,
+        "description_en": "70–99 mg/dL"
+      },
+      {
+        "id": "prediabetes_range",
+        "name_en": "Prediabetes range (fasting)",
+        "name_sw": "Kiwango cha tahadhari (Prediabetes)",
+        "min_mgdl": 100,
+        "max_mgdl": 125,
+        "description_en": "100–125 mg/dL"
+      },
+      {
+        "id": "diabetes_range",
+        "name_en": "Diabetes range (fasting)",
+        "name_sw": "Kiwango cha kisukari (Diabetes range)",
+        "min_mgdl": 126,
+        "description_en": "≥126 mg/dL"
+      }
+    ],
+    "emergency_thresholds": {
+      "severe_low_mgdl": 54,
+      "severe_high_mgdl": 400
+    },
+    "nudge_thresholds": {
+      "mild_low_mgdl": 70,
+      "mild_high_mgdl": 300
+    },
+    "validation": {
+      "mgdl_min": 18,
+      "mgdl_max": 800
+    }
+  },
+  "refill": {
+    "default_prescription_days": 30,
+    "min_fixed_lead_days": 7,
+    "percentage_lead_ratio": 0.20
+  },
+  "escalation": {
+    "nudge_missed_days": 3,
+    "self_prompt_missed_days": 5,
+    "contact_notify_total_days": 7,
+    "unanswered_grace_hours": 48
+  }
+}

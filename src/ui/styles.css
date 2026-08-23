@@ -1,0 +1,738 @@
+/* ==========================================================================
+   TunzaCare — Ledger / Passport Clinical Record Design
+   Fonts: 'Spectral', 'Special Elite', 'IBM Plex Mono'
+   ========================================================================== */
+
+:root {
+  --paper: #F3EDDD;
+  --paper-2: #ECE4CE;
+  --paper-dark: #E4DAC0;
+  --ink: #2B2419;
+  --ink-soft: #6B5F49;
+  --ink-faint: #9E9177;
+  --rule: #C9BFA0;
+  --stamp: #9C3B2A;
+  --stamp-dim: #EDD9D2;
+  --seal: #3D6650;
+  --seal-dim: #DDE7DF;
+  --tab-ochre: #B8863B;
+  --tab-ochre-dim: #F5EADA;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #DED2AF;
+  font-family: 'Spectral', Georgia, serif;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 14px 60px;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* Toolbar for navigation & demo testing */
+.toolbar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 480px;
+  z-index: 20;
+}
+
+.tbtn {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+  padding: 6px 12px;
+  border-radius: 3px;
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  transition: all 0.15s ease;
+}
+
+.tbtn:hover {
+  background: var(--paper-2);
+  color: var(--ink);
+}
+
+.tbtn.active {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+/* --------------------------------------------------------------------------
+   Book Shell / Stitched Spine (Mobile First)
+   -------------------------------------------------------------------------- */
+.book {
+  width: 100%;
+  max-width: 400px;
+  min-width: 320px;
+  height: 740px;
+  max-height: 92vh;
+  position: relative;
+  box-shadow: 0 24px 60px rgba(30, 22, 10, 0.4), 0 4px 16px rgba(0,0,0,0.15);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--paper);
+  border: 1px solid rgba(0,0,0,0.12);
+  display: block;
+}
+
+/* Stitched Spine */
+.spine {
+  position: absolute;
+  left: 20px;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-left: 2px dashed #B7A87E;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.spine .hole {
+  position: absolute;
+  left: -4.5px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #DED2AF;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.35);
+}
+
+/* Right-Edge Tab Rail */
+.tabs {
+  position: absolute;
+  right: 0;
+  top: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 15;
+}
+
+.tab {
+  width: 32px;
+  min-height: 44px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Special Elite', monospace;
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 6px 0 0 6px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  opacity: 0.75;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.tab:hover { opacity: 0.92; }
+.tab.selected {
+  opacity: 1;
+  width: 36px;
+  box-shadow: -3px 0 10px rgba(0,0,0,0.28);
+}
+
+.tab.t1 { background: var(--tab-ochre); }
+.tab.t2 { background: var(--seal); }
+.tab.t3 { background: var(--stamp); }
+.tab.t4 { background: #5B5140; }
+.tab.t5 { background: #44535F; }
+
+/* --------------------------------------------------------------------------
+   Pages (Mobile First Single Page)
+   -------------------------------------------------------------------------- */
+.page {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0, transparent 27px, rgba(150,130,90,0.14) 28px),
+    radial-gradient(circle at 85% 15%, rgba(255,255,255,0.3), transparent 45%),
+    var(--paper);
+  display: none;
+  padding: 28px 24px 24px 38px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(183, 168, 126, 0.5) transparent;
+}
+
+.page::-webkit-scrollbar {
+  width: 5px;
+}
+
+.page::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.page::-webkit-scrollbar-thumb {
+  background: rgba(183, 168, 126, 0.45);
+  border-radius: 2px;
+}
+
+.page::-webkit-scrollbar-thumb:hover {
+  background: rgba(183, 168, 126, 0.8);
+}
+
+.page.active { display: block; }
+
+/* --------------------------------------------------------------------------
+   Tier 2: Tablet & Desktop Two-Page Spread (>= 700px)
+   -------------------------------------------------------------------------- */
+@media (min-width: 700px) {
+  body {
+    padding: 26px 20px 50px;
+  }
+
+  .toolbar {
+    max-width: 700px;
+    margin-bottom: 20px;
+  }
+
+  .book {
+    width: min(880px, 94vw);
+    max-width: 920px;
+    height: 700px;
+    max-height: 88vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 100%;
+    box-shadow: 0 30px 80px rgba(30, 22, 10, 0.45), 0 6px 24px rgba(0,0,0,0.18);
+  }
+
+  /* Book Center Gutter Shadow */
+  .book::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    background: linear-gradient(to right, rgba(0,0,0,0.06), rgba(0,0,0,0.01) 35%, transparent 50%, rgba(0,0,0,0.01) 65%, rgba(0,0,0,0.06));
+    pointer-events: none;
+    z-index: 12;
+  }
+
+  /* Stitched Spine Runs Down Center Gutter */
+  .spine {
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 14;
+  }
+
+  /* Right-Edge Tab Rail Stays Outside Right Page */
+  .tabs {
+    right: 0;
+    top: 60px;
+    z-index: 16;
+  }
+
+  /* Pages in 2-Page Layout */
+  .page {
+    position: relative;
+    inset: auto;
+    height: 100%;
+    display: none;
+    padding: 30px 28px 24px 34px;
+  }
+
+  /* Left Page Slot */
+  .page.active-left {
+    grid-column: 1;
+    display: block;
+    border-right: 1px solid rgba(0,0,0,0.05);
+    padding: 30px 26px 24px 32px;
+  }
+
+  /* Right Page Slot (Facing Page) */
+  .page.active-right {
+    grid-column: 2;
+    display: block;
+    padding: 30px 38px 24px 28px;
+  }
+
+  /* Single-Page Full-Attention Screens (Alert / Emergency & Sealed Letter) */
+  .page.active-single {
+    grid-column: 1 / -1;
+    display: block;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 30px 24px;
+    z-index: 20;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Typography & Rules
+   -------------------------------------------------------------------------- */
+.eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
+
+h1 {
+  font-family: 'Spectral', Georgia, serif;
+  font-weight: 600;
+  font-size: 22px;
+  margin: 0 0 4px;
+  font-style: italic;
+  color: var(--ink);
+}
+
+h2 {
+  font-family: 'Spectral', Georgia, serif;
+  font-weight: 600;
+  font-size: 15px;
+  margin: 0 0 6px;
+  color: var(--ink);
+}
+
+p.lede {
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0 0 14px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--rule);
+  margin: 14px 0;
+}
+
+.perf {
+  border: none;
+  height: 0;
+  margin: 16px 0;
+  border-top: 1px dashed #B7A87E;
+  position: relative;
+}
+
+/* --------------------------------------------------------------------------
+   Passport Circular Stamp Button (Adherence)
+   -------------------------------------------------------------------------- */
+.stamp-btn {
+  width: 98px;
+  height: 98px;
+  border-radius: 50%;
+  margin: 8px auto 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 2.5px solid var(--stamp);
+  color: var(--stamp);
+  font-family: 'Special Elite', monospace;
+  font-size: 11.5px;
+  text-align: center;
+  line-height: 1.25;
+  transform: rotate(-5deg);
+  cursor: pointer;
+  background: transparent;
+  transition: all 0.2s ease;
+  user-select: none;
+  box-shadow: 0 2px 8px rgba(156, 59, 42, 0.15);
+}
+
+.stamp-btn:hover {
+  transform: rotate(-3deg) scale(1.03);
+}
+
+.stamp-btn.done {
+  background: var(--stamp);
+  color: #fff;
+  transform: rotate(-4deg);
+  border-color: var(--stamp);
+  box-shadow: 0 4px 14px rgba(156, 59, 42, 0.3);
+}
+
+.stamp-btn small {
+  font-size: 8.5px;
+  opacity: 0.85;
+  display: block;
+  margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Visa-Grid Streak Calendar
+   -------------------------------------------------------------------------- */
+.visa-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.visa-day {
+  aspect-ratio: 1;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--ink-soft);
+  position: relative;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.visa-day.stamped {
+  color: var(--seal);
+  font-weight: 700;
+  border-color: var(--seal);
+  background: var(--seal-dim);
+}
+
+.visa-day.stamped::after {
+  content: '●';
+  position: absolute;
+  font-size: 16px;
+  color: var(--seal);
+  opacity: 0.85;
+  transform: rotate(-8deg);
+}
+
+.visa-day.today {
+  border: 2px solid var(--stamp);
+  color: var(--stamp);
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* --------------------------------------------------------------------------
+   Ledger Lines & History
+   -------------------------------------------------------------------------- */
+.ledger-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+}
+
+.ledger-line .date {
+  color: var(--ink-soft);
+  width: 65px;
+  flex-shrink: 0;
+  font-size: 11px;
+}
+
+.ledger-line .val {
+  font-weight: 600;
+  flex: 1;
+  text-align: left;
+  padding-left: 8px;
+}
+
+.band-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 600;
+}
+
+.band-normal { background: var(--seal-dim); color: var(--seal); }
+.band-elevated { background: #F3E4C6; color: var(--tab-ochre); }
+.band-high { background: var(--stamp-dim); color: var(--stamp); }
+
+/* --------------------------------------------------------------------------
+   Form Inputs & Buttons
+   -------------------------------------------------------------------------- */
+.input-row { margin-bottom: 14px; }
+
+.input-row label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.input-row input {
+  width: 100%;
+  border: none;
+  border-bottom: 1.5px solid var(--ink);
+  background: transparent;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 19px;
+  padding: 4px 2px;
+  color: var(--ink);
+  font-weight: 600;
+  outline: none;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 12px;
+  border-radius: 3px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.btn-ink {
+  background: var(--ink);
+  color: var(--paper);
+}
+.btn-ink:hover {
+  background: #3F3526;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--ink);
+  color: var(--ink);
+}
+.btn-outline:hover {
+  background: rgba(43, 36, 25, 0.06);
+}
+
+/* --------------------------------------------------------------------------
+   Emergency: Torn Page (Breaks the metaphor deliberately)
+   -------------------------------------------------------------------------- */
+.torn-page {
+  background: var(--stamp);
+  color: #fff;
+  height: 100%;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+}
+
+.torn-edge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background:
+    linear-gradient(135deg, var(--paper) 25%, transparent 25.5%) 0 0/14px 14px,
+    linear-gradient(-135deg, var(--paper) 25%, transparent 25.5%) 0 0/14px 14px;
+}
+
+.big-stamp {
+  font-family: 'Special Elite', monospace;
+  font-size: 26px;
+  border: 3.5px solid #fff;
+  padding: 8px 18px;
+  transform: rotate(-5deg);
+  margin: 22px 20px 14px;
+  letter-spacing: 0.04em;
+}
+
+.reading-huge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.torn-page p {
+  font-family: 'Spectral', Georgia, serif;
+  font-size: 13.5px;
+  padding: 0 26px;
+  line-height: 1.55;
+  margin-bottom: 20px;
+}
+
+.btn-white {
+  background: #fff;
+  color: var(--stamp);
+  margin: 0 26px;
+  width: calc(100% - 52px);
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 12px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn-white:hover {
+  background: #FAF7F2;
+}
+
+/* --------------------------------------------------------------------------
+   Sealed Letter (Escalation Preview)
+   -------------------------------------------------------------------------- */
+.envelope {
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  padding: 0;
+  margin-top: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.envelope-flap {
+  background: var(--paper-2);
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1.5px dashed var(--rule);
+  font-family: 'Special Elite', monospace;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.envelope-body {
+  padding: 14px;
+  font-size: 13px;
+  line-height: 1.55;
+  font-style: italic;
+  color: var(--ink);
+}
+
+.wax {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--stamp);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 6px;
+  font-family: 'Special Elite', monospace;
+  font-size: 11px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+}
+
+.toggle {
+  width: 40px;
+  height: 22px;
+  border-radius: 14px;
+  background: var(--seal);
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transition: all 0.2s;
+}
+
+.toggle.off {
+  background: var(--rule);
+}
+
+.toggle.off::after {
+  left: 2px;
+  right: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Settings Page Registry Cards
+   -------------------------------------------------------------------------- */
+.registry-box {
+  border: 1px solid var(--rule);
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 3px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.registry-box h2 {
+  font-size: 13.5px;
+  text-transform: uppercase;
+  font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.lang-chip-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.lang-chip {
+  flex: 1;
+  padding: 6px;
+  text-align: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.lang-chip.selected {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+@media (max-width: 440px) {
+  body {
+    padding: 16px 8px 40px;
+  }
+  .book {
+    width: 100%;
+    max-width: 100vw;
+    height: 90vh;
+    border-radius: 2px;
+  }
+  .page {
+    padding: 24px 18px 20px 34px;
+  }
+}

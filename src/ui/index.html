@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TunzaCare — Mwendelezo wa Afya</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/logo/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Navigation Toolbar for Demonstration / Quick Testing -->
+  <div class="toolbar">
+    <button class="tbtn active" data-p="home" id="tbtn-home">Home</button>
+    <button class="tbtn" data-p="log" id="tbtn-log">Log Reading</button>
+    <button class="tbtn" data-p="alert" id="tbtn-alert">Emergency</button>
+    <button class="tbtn" data-p="escalation" id="tbtn-escalation">Sealed Letter</button>
+    <button class="tbtn" data-p="trends" id="tbtn-trends">Ledger / Trends</button>
+    <button class="tbtn" data-p="settings" id="tbtn-settings">Settings</button>
+    <button class="tbtn" id="lang-switch-btn" style="background:#2B2419; color:#F3EDDD; border-color:#2B2419;">🇰🇪 SWA / ENG</button>
+  </div>
+
+  <!-- Book Shell -->
+  <div class="book">
+    <!-- Stitched Spine -->
+    <div class="spine">
+      <div class="hole" style="top:60px;"></div>
+      <div class="hole" style="top:210px;"></div>
+      <div class="hole" style="top:360px;"></div>
+      <div class="hole" style="top:510px;"></div>
+      <div class="hole" style="top:660px;"></div>
+    </div>
+
+    <!-- Right-Edge Signature Tabs -->
+    <div class="tabs">
+      <div class="tab t1 selected" data-t="home" id="tab-home">TODAY</div>
+      <div class="tab t2" data-t="log" id="tab-log">LOG</div>
+      <div class="tab t3" data-t="alert" id="tab-alert">ALERT</div>
+      <div class="tab t4" data-t="escalation" id="tab-escalation">CONTACT</div>
+      <div class="tab t5" data-t="trends" id="tab-trends">LEDGER</div>
+    </div>
+
+    <!-- 1. HOME (TODAY'S PAGE) -->
+    <div class="page active" id="home">
+      <div class="eyebrow" id="home-date-eyebrow">14 · Aug · Thursday</div>
+      <h1 id="home-greeting-heading">Good afternoon, Asha</h1>
+      <p class="lede" id="home-streak-text">Day 6 of your record. Steady as it goes.</p>
+
+      <!-- Real Stamp Button -->
+      <div class="stamp-btn" id="home-stamp-btn">
+        <span id="stamp-main-text">STAMP</span>
+        <small id="stamp-sub-text">TODAY</small>
+      </div>
+      <p style="text-align:center; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft); margin-top:-2px;" id="stamp-hint-text">
+        Tap to stamp today's medication
+      </p>
+
+      <hr class="perf">
+
+      <div class="eyebrow" id="home-month-eyebrow">This month's page</div>
+      <!-- Real Data-Bound Visa Grid Calendar -->
+      <div class="visa-grid" id="home-visa-grid">
+        <!-- Injected dynamically from real adherence_log -->
+      </div>
+
+      <hr class="divider">
+      <div class="eyebrow" id="home-refill-eyebrow">Refill</div>
+      <p class="lede" style="margin-bottom:6px;" id="home-refill-text">9 days of medicine remain in your supply.</p>
+      <div style="height:6px; background:var(--rule); border-radius:3px; overflow:hidden;">
+        <div id="home-refill-bar-fill" style="width:30%; height:100%; background:var(--tab-ochre); transition:width 0.3s ease;"></div>
+      </div>
+    </div>
+
+    <!-- 2. LOG READING -->
+    <div class="page" id="log">
+      <div class="eyebrow" id="log-eyebrow">New Entry</div>
+      <h1 id="log-heading">Log a reading</h1>
+      <p class="lede" id="log-lede">Written into today's page of your record.</p>
+
+      <!-- Reading Type Picker (If both conditions tracked) -->
+      <div style="display:flex; gap:6px; margin-bottom:14px;" id="log-type-selector">
+        <button class="tbtn active" data-type="BP" id="type-bp-btn">Blood Pressure (mmHg)</button>
+        <button class="tbtn" data-type="GLUCOSE" id="type-glucose-btn">Blood Sugar</button>
+      </div>
+
+      <!-- BP Inputs -->
+      <div id="bp-input-fields">
+        <div class="input-row">
+          <label>Systolic (mmHg)</label>
+          <input type="number" id="input-sys" placeholder="120" value="142" />
+        </div>
+        <div class="input-row">
+          <label>Diastolic (mmHg)</label>
+          <input type="number" id="input-dia" placeholder="80" value="94" />
+        </div>
+      </div>
+
+      <!-- Glucose Inputs -->
+      <div id="glucose-input-fields" style="display:none;">
+        <div class="input-row">
+          <label>Blood Sugar (mg/dL)</label>
+          <input type="number" id="input-glucose" placeholder="110" value="110" />
+        </div>
+      </div>
+
+      <div class="ledger-line" style="border:none; padding-top:0; margin-bottom:12px;">
+        <span style="font-family:'Spectral',serif; font-style:italic; font-size:13px;" id="live-band-label">This reading falls in</span>
+        <span class="band-tag band-elevated" id="live-band-tag">Grade 1</span>
+      </div>
+
+      <hr class="divider">
+      <button class="btn btn-ink" id="save-reading-btn">Write into ledger</button>
+      <button class="btn btn-outline" id="cancel-reading-btn" style="margin-top:6px;">Cancel</button>
+    </div>
+
+    <!-- 3. EMERGENCY (TORN PAGE METAPHOR) -->
+    <div class="page" id="alert" style="padding:0;">
+      <div class="torn-page">
+        <div class="torn-edge"></div>
+        <div class="big-stamp" id="emergency-stamp-title">URGENT</div>
+        <div class="reading-huge" id="emergency-reading-val">204/108</div>
+        <p id="emergency-body-text">
+          This reading is well outside your usual range. Please contact a health worker or go to a facility now.
+        </p>
+        <button class="btn btn-white" id="emergency-ack-btn">Nimeelewa — I understand</button>
+      </div>
+    </div>
+
+    <!-- 4. ESCALATION (SEALED LETTER) -->
+    <div class="page" id="escalation">
+      <div class="eyebrow" id="escalation-eyebrow">Trusted Contact</div>
+      <h1 id="escalation-heading">A sealed letter</h1>
+      <p class="lede" id="escalation-lede">If you go quiet for a week, this — and only this — is what gets sent to your trusted contact.</p>
+
+      <div class="envelope">
+        <div class="envelope-flap" id="envelope-flap-text">✉ BREAK SEAL TO PREVIEW</div>
+        <div class="envelope-body">
+          <div class="wax">✕</div>
+          <div id="escalation-rendered-preview">
+            "Habari, hii ni taarifa ya kumjulia hali Asha kutoka kwenye programu yake ya afya. Hajathibitisha rekodi yake kwa wiki moja — tafadhali wasiliana naye kumjulia hali."
+          </div>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--ink-soft);" id="escalation-toggle-label">
+          SEND THIS IF I GO QUIET
+        </span>
+        <div class="toggle off" id="escalation-toggle"></div>
+      </div>
+
+      <p style="font-size:11px; color:var(--ink-soft); margin-top:14px;" id="escalation-privacy-footnote">
+        No readings. No numbers. No medicine names. Only this.
+      </p>
+
+      <div class="registry-box" style="margin-top:14px;" id="escalation-contact-box">
+        <h2>Contact Details</h2>
+        <div class="input-row" style="margin-bottom:8px;">
+          <label>Contact Name</label>
+          <input type="text" id="escalation-contact-name" value="Mary (CHW)" style="font-size:15px;" />
+        </div>
+        <div class="input-row" style="margin-bottom:8px;">
+          <label>Contact Phone</label>
+          <input type="text" id="escalation-contact-phone" value="+254 712 345 678" style="font-size:15px;" />
+        </div>
+        <button class="btn btn-ink" id="save-escalation-contact-btn" style="padding:8px; font-size:11px;">Update Contact</button>
+      </div>
+    </div>
+
+    <!-- 5. TRENDS (THE LEDGER) -->
+    <div class="page" id="trends">
+      <div class="eyebrow" id="trends-eyebrow">The Ledger</div>
+      <h1 id="trends-heading">Your record</h1>
+      <p class="lede" id="trends-lede">Every entry, in order, as written.</p>
+
+      <!-- Real Dynamic Ledger Table Entries -->
+      <div id="ledger-entries-list">
+        <!-- Rendered dynamically from real store.js readings log -->
+      </div>
+    </div>
+
+    <!-- 6. SETTINGS (REGISTRY PAGE) -->
+    <div class="page" id="settings">
+      <div style="text-align:center; margin-bottom:12px;">
+        <img src="../assets/logo/14_LOGO_PRIMARY.svg" alt="TunzaCare Logo" style="width:200px; height:auto; display:inline-block;" />
+      </div>
+      <div class="eyebrow">Registry</div>
+      <h1>Official record settings</h1>
+      <p class="lede">Manage patient name, language, refill cycle, and data.</p>
+
+      <div class="registry-box">
+        <h2>Patient Profile</h2>
+        <div class="input-row" style="margin-bottom:8px;">
+          <label>First Name or Nickname</label>
+          <input type="text" id="settings-name-input" value="Asha" style="font-size:15px;" />
+        </div>
+        <button class="btn btn-ink" id="settings-save-profile-btn" style="padding:8px; font-size:11px;">Save Name</button>
+      </div>
+
+      <div class="registry-box">
+        <h2>Language / Lugha</h2>
+        <div class="lang-chip-row">
+          <div class="lang-chip" id="lang-en-chip">English</div>
+          <div class="lang-chip" id="lang-sw-chip">Kiswahili</div>
+        </div>
+      </div>
+
+      <div class="registry-box">
+        <h2>Prescription Duration</h2>
+        <div class="input-row" style="margin-bottom:8px;">
+          <label>Days per refill</label>
+          <input type="number" id="settings-refill-days" value="30" style="font-size:15px;" />
+        </div>
+        <button class="btn btn-outline" id="settings-record-refill-btn" style="padding:8px; font-size:11px;">Record Refill Today</button>
+      </div>
+
+      <div class="registry-box">
+        <h2>Data Management</h2>
+        <button class="btn btn-outline" id="export-data-btn" style="padding:8px; font-size:11px;">Export Data (JSON)</button>
+        <button class="btn btn-outline" id="reset-data-btn" style="padding:8px; font-size:11px; margin-top:6px; color:var(--stamp); border-color:var(--stamp);">Reset Demo Data</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

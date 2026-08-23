@@ -1,0 +1,20 @@
+{
+  "name": "tunzacare",
+  "version": "1.0.0",
+  "description": "TunzaCare — Longitudinal companion for adults in Kenya managing hypertension and/or diabetes post-diagnosis",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "tunzacare",
+    "healthcare",
+    "hypertension",
+    "diabetes",
+    "kenya",
+    "continuity-of-care"
+  ],
+  "author": "DeepMind Agentic Team",
+  "license": "UNLICENSED"
+}
