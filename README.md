@@ -23,7 +23,7 @@
 
 ## The Problem: The Post-Diagnosis Retention Drop-Off
 
-In Kenya, an estimated **24.5% of adults live with hypertension**, yet **fewer than 1 in 50 (3%) achieve blood pressure control**. 
+In Kenya, an estimated **24.5% of adults live with hypertension**, yet **fewer than 1 in 50 (3%) achieve blood pressure control**.
 
 The breakdown rarely occurs at initial screening. It occurs in the silent months following diagnosis:
 1. **Asymptomatic False Security**: Hypertension and diabetes are largely "silent." Patients often feel completely healthy while blood pressure or blood sugar climbs to dangerous thresholds, leading to discontinued medication.
@@ -44,7 +44,6 @@ Built on a tactile **Ledger & Passport metaphor**, patients log daily adherence 
 ### 2. Live Band Classification & Dual-Output Vitals Logging
 When a patient logs blood pressure or blood sugar, the system provides immediate, non-shaming visual classification based on **ISH 2020 Home Monitoring Bands** and **ADA 2024 Fasting Glucose Cutoffs**.
 
-![TunzaCare Log Reading Screen](docs/screenshots/log-reading.png)
 
 ### 3. Non-Dismissible Emergency Alerts
 If a reading crosses critical safety thresholds ($\ge 200/100\text{ mmHg}$, $\text{SBP} < 80\text{ mmHg}$, $\le 53\text{ mg/dL}$, or $> 400\text{ mg/dL}$), the interface immediately triggers a high-contrast **Torn Paper Emergency Interrupt**. The alert cannot be dismissed by clicking away, pressing Escape, or navigating back—it requires an explicit, conscious acknowledgment tap (*"Nimeelewa — I understand"*).
@@ -62,7 +61,7 @@ To guarantee strict patient privacy, the escalation trigger is **opt-in only (st
 
 ## Architectural & Governance Invariants
 
-All development is governed by formal non-negotiable rules ([`AGENTS.md`](AGENTS.md) and [`01_DATA_SOURCES.md`](01_DATA_SOURCES.md)):
+All development follows eight non-negotiable rules (decision trail in [`docs/DECISIONS.md`](docs/DECISIONS.md)):
 
 | Rule | Invariant & Implementation |
 | :--- | :--- |
@@ -80,45 +79,26 @@ All development is governed by formal non-negotiable rules ([`AGENTS.md`](AGENTS
 ## Project Structure
 
 ```
-healthcare/
-├── 00_PROJECT_BRIEF.md            # Mission scope & Kenya NCD epidemiology
-├── 01_DATA_SOURCES.md             # Authoritative clinical threshold specifications
-├── 02_AGENTS_RULES.md             # Governance rules & non-negotiables
-├── AGENTS.md                      # Root copy of project governance
+TunzaCare/
+├── 04_TODO.md                     # Open work items
+├── 05_DESIGN_MOCKUP.html          # Design mockup
+├── 09_DESIGN_LEDGER_CONCEPT.html  # Ledger & Passport design concept
+├── 13–15_LOGO_*.svg               # Logo assets
 ├── LICENSE                        # MIT License
 ├── package.json                   # Project metadata & npm test configuration
 ├── server.js                      # Zero-dependency local dev server
 ├── docs/
 │   ├── DECISIONS.md               # Architectural & design decision audit trail
 │   ├── SESSION_SUMMARY.md         # Full build session record
-│   └── screenshots/               # High-resolution production screenshots
+│   └── screenshots/               # Production screenshots
 ├── src/
-│   ├── assets/logo/               # Scale-free SVG brand assets (13_LOGO_MARK, 14_LOGO_PRIMARY, favicon)
-│   ├── data/
-│   │   └── clinical_thresholds.json # Single source of truth for all numerical constants
-│   ├── escalation/
-│   │   └── escalation.js          # Isolated outbound escalation subsystem
-│   ├── i18n/
-│   │   ├── en.json                # English dictionary
-│   │   ├── sw.json                # Swahili dictionary (1:1 parity)
-│   │   └── i18n.js                # Translation and interpolation engine
-│   ├── logic/
-│   │   ├── adherence.js           # 80% adherence calculation & refill formula
-│   │   ├── education.js           # Topic-level non-repetitive micro-education
-│   │   └── readings.js            # Immutable vitals logging & dual-output classifier
-│   ├── storage/
-│   │   └── store.js               # Local-first persistence engine with memory fallback
-│   └── ui/
-│       ├── app.js                 # UI orchestrator & reactive bindings
-│       ├── index.html             # Shell layout with spine, tabs, and page views
-│       └── styles.css             # Complete Ledger & responsive two-page stylesheet
-└── tests/
-    ├── adversarial.test.js        # Extreme values, duplicate check-ins, unit conversions
-    ├── boundary_clinical.test.js  # 80% threshold, ISH BP bands, ADA glucose cutoffs
-    ├── core_logic.test.js         # Refill formula, immutability, dual-output alerts
-    ├── emergency_invariant.test.js # Un-dismissible emergency modal invariant
-    ├── escalation_privacy.test.js # Zero health data payload & offline queue-and-retry
-    └── i18n.test.js               # Bidirectional 1:1 key symmetry & non-shaming copy audit
+│   ├── data/clinical_thresholds.json  # Single source of truth for all clinical numbers
+│   ├── escalation/escalation.js   # Isolated outbound escalation subsystem
+│   ├── i18n/                      # English & Swahili dictionaries + translation engine
+│   ├── logic/                     # Adherence, education, readings & classification
+│   ├── storage/store.js           # Local-first persistence with memory fallback
+│   └── ui/                        # App shell, reactive bindings, styles
+└── tests/                         # 23 clinical-boundary, invariant, privacy & i18n tests
 ```
 
 ---
@@ -133,8 +113,8 @@ TunzaCare is built with zero runtime framework dependencies (vanilla JavaScript 
 ### 1. Clone & Run Dev Server
 ```bash
 # Clone the repository
-git clone https://github.com/osus/tunzacare.git
-cd tunzacare
+git clone https://github.com/Tolbert-Okoth/TunzaCare.git
+cd TunzaCare
 
 # Start local server
 node server.js
@@ -191,3 +171,5 @@ ok 23 - i18n (USER ITEM 4 / Rule 7): Non-shaming copy audit across all strings
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+Built by **Tolbert Okoth**: [GitHub](https://github.com/Tolbert-Okoth) · [LinkedIn](https://www.linkedin.com/in/tolbert-asumba-542b3b344)
